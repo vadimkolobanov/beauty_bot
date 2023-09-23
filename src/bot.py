@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher
 import asyncio
+from aiogram.enums.parse_mode import ParseMode
 
 from config import Config
 from handlers import basic, specialist, admin
@@ -7,9 +8,13 @@ from utils.commands import set_commands
 
 
 async def start():
-    bot = Bot(token=Config.token, parse_mode="HTML")
+    bot = Bot(token=Config.token, parse_mode=ParseMode.HTML)
     dp = Dispatcher(bot=bot)
-    basic.register_handlers_basic(dp=dp)
+
+    # REGISTER HANDLERS
+    basic.register_handlers(dp=dp)
+    specialist.register_handlers(dp=dp)
+    admin.register_handlers(dp=dp)
 
     await set_commands(bot=bot)
 

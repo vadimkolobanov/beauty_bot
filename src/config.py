@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from os import environ
-
+from pathlib import Path
 
 @dataclass
 class Config:

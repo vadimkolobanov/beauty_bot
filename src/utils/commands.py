@@ -3,6 +3,7 @@ from aiogram.types import BotCommand, BotCommandScopeDefault
 
 from src.emoji import Emoji
 
+# ToDo #specialist
 
 async def set_commands(bot: Bot):
     commands = [
@@ -22,6 +23,11 @@ async def set_commands(bot: Bot):
             command='about',
             description=f'{Emoji.QUESTION} Про бота'
         ),
+        BotCommand(
+            command='specialist_types',
+            description=f'{Emoji.PEOPLE} Специалисты'
+        ),
+
     ]
 
     await bot.set_my_commands(commands=commands, scope=BotCommandScopeDefault())

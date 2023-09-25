@@ -20,10 +20,7 @@ class DataBase:
         with self.connect:
             self.cursor.execute(f"SELECT * FROM user WHERE id = ?", (user_id,))
             result = self.cursor.fetchone()
-        if result:
-            return True
-        else:
-            return False
+        return True if result else False
 
     async def add_specialist(
             self,
@@ -33,12 +30,11 @@ class DataBase:
             text: str | None,
             photo: str | None
     ) -> None:
-        if await self.check_user(user_id):
-            with self.connect:
-                columns = ', '.join(['id', 'name'] + specifications + ['text', 'photo'])
-                values = ', '.join([str(user_id), f"'{name}'"] + ["1" for i in range(len(specifications))] + [f"'{text}'", f"'{photo}'"])
-                query = f"""INSERT INTO specialist ({columns}) VALUES ({values})"""
-                self.cursor.execute(query)
+        with self.connect:
+            columns = ', '.join(['id', 'name'] + specifications + ['text', 'photo'])
+            values = ', '.join([str(user_id), f"'{name}'"] + ["1" for i in range(len(specifications))] + [f"'{text}'", f"'{photo}'"])
+            query = f"""INSERT INTO specialist ({columns}) VALUES ({values})"""
+            self.cursor.execute(query)
 
     async def get_specialists(self, specification: str) -> list:
         with self.connect:

@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, Bot, F
-from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command, MagicData
+from aiogram.types import Message, CallbackQuery, InputFile, FSInputFile
+from aiogram.filters import Command
+from pathlib import Path
 
 from src.kayboards.inline import in_show_spec_types
 from src.emoji import Emoji
@@ -65,8 +66,20 @@ async def choose_specialist_types(message: Message) -> None:
     await message.answer('Выберите специалиста:', reply_markup=in_show_spec_types)
 
 
-async def show_specialists(callback: CallbackQuery) -> None:
+async def show_specialists(callback: CallbackQuery, bot: Bot) -> None:
     await callback.message.delete()
+    specialists = await db.get_specialists(specification=callback.data.replace("spec_", ""))
+    for specialist in specialists:
+        text = f"<b>\t{specialist['name']}</b>\n"\
+                 f"<i>{' '.join([f'#{key}' for key, value in specialist.items() if value == 1])}</i>"
+        if "text" in specialist:
+            text += f"\n\n<b>P.S.</b>: {specialist['text']}"
+
+        if "photo" in specialist:
+            photo = FSInputFile(path=specialist['photo'])
+            await bot.send_photo(chat_id=callback.message.chat.id, photo=photo, caption=text)
+        else:
+            await callback.message.answer(text=text)
 
 
 def register_handlers(dp: Dispatcher):
